@@ -41,7 +41,7 @@ app.delete("/user", async (req, res) => {
 connectdb()
   .then(() => {
     console.log("Database connected");
-    app.listen(process.env.PORT, () => {
+    app.listen(process.env.PORT,"0.0.0.0", () => {
       console.log("Server is running on port 8000");
     });
   })
