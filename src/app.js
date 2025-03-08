@@ -4,11 +4,15 @@ import User from "./models/user.js";
 import validationData from "./utils/validation.js";
 import "dotenv/config";
 
+import http from "http";
+
+import cors from "cors";
 
 import cookieParser from "cookie-parser";
 
-import cors from "cors"
+
 const app = express();
+
 app.use(cors({
   origin:"http://localhost:5173",
   credentials:true
@@ -17,17 +21,20 @@ app.use(cookieParser());
 app.use(express.json());
 
 import authRouter from "./routes/auth.js";
-
 import profileRouter from "./routes/profile.js";
 import requestRouter from "./routes/requests.js";
 import userRouter from "./routes/users.js";
+import chatRouter from "./routes/chat.js"
+import initializeSocket from "./utils/socket.js"; // Adjust the path to where your socket file is located
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
+app.use("/", chatRouter);
 
-
+const server = http.createServer(app);
+initializeSocket(server);
 
 app.delete("/user", async (req, res) => {
   try {
@@ -41,7 +48,7 @@ app.delete("/user", async (req, res) => {
 connectdb()
   .then(() => {
     console.log("Database connected");
-    app.listen(process.env.PORT,"0.0.0.0", () => {
+    server.listen(process.env.PORT,"0.0.0.0", () => {
       console.log("Server is running on port 8000");
     });
   })
